@@ -47,6 +47,6 @@ module "k8s_apps" {
     aws_region = var.aws_region
     app_name = "nea-translator"
     container_port = 8000
-    force_image_rebuild = false
+    force_image_rebuild = true
     command = "pipenv run start_container"
 }
