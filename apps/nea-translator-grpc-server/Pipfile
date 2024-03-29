@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+grpcio = "*"
+grpcio-tools = "*"
+watchdog = "*"
+openai = "*"
+python-dotenv = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+build = "python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. nea-translator.proto"
+start = "python server.py"
+startw = "watchmedo shell-command --patterns='**/*' --command='python server.py' ."
+start_container = "python server.py"

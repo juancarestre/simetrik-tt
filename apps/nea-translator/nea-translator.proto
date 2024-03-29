@@ -1,0 +1,18 @@
+// nea-translator.proto
+syntax = "proto3";
+
+package neatranslator;
+
+service NeaTranslator {
+    rpc Translate (TranslationRequest) returns (TranslationResponse) {}
+}
+
+message TranslationRequest {
+    string mensaje = 1;
+    int32 nivel_de_nea = 2;
+    string region = 3;
+}
+
+message TranslationResponse {
+    string traduccion = 1;
+}

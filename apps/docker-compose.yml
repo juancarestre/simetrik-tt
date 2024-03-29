@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  nea-translator:
+    command: pipenv run start_container
+    build:
+      context: ./nea-translator
+    environment:
+      - GRPC_SERVER=nea-translator-grpc-server:50051
+    ports:
+      - "8000:8000"
+    networks:
+      - nea-network
+
+  nea-translator-grpc-server:
+    command: pipenv run start_container
+    build:
+      context: ./nea-translator-grpc-server
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "50051:50051"
+    networks:
+      - nea-network
+
+networks:
+  nea-network:
