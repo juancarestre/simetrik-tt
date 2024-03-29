@@ -1,6 +1,6 @@
 FROM --platform=linux/amd64 python:3.9-slim AS build
 WORKDIR /app
-COPY Pipfile Pipfile.lock nea-translator.proto ./
+COPY Pipfile nea-translator.proto ./
 RUN pip install pipenv && pipenv install --system --deploy
 RUN pipenv install &&\
     pipenv run build
