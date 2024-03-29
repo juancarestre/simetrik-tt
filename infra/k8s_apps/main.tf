@@ -25,7 +25,7 @@ resource "kubernetes_manifest" "deployment" {
               "image" = "${aws_ecr_repository.ecr_repo.repository_url}:${var.image_version}"
               "imagePullPolicy" = "Always"
               "name" = "${var.app_name}"
-              "command" = ["sleep 300"]
+              "command" = var.command
               "ports" = [
                 {
                   "containerPort" = "${var.container_port}"

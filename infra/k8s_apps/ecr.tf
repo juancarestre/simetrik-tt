@@ -8,9 +8,9 @@ resource "aws_ecr_repository" "ecr_repo" {
 }
 
 locals {
-  dkr_img_src_sha256 = sha256(join("", [for f in fileset(".", "../apps/nea-translator/**") : file(f)]))
+  dkr_img_src_sha256 = sha256(join("", [for f in fileset(".", "${var.app_path}**") : file(f)]))
   docker_build_and_push = <<-EOT
-        cd ../apps/nea-translator/
+        cd ${var.app_path}
         docker build -t ${aws_ecr_repository.ecr_repo.repository_url}:${var.image_version} --platform=linux/amd64 .
 
         aws --profile ${var.aws_profile} ecr get-login-password --region ${var.aws_region} | \

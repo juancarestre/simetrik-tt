@@ -24,10 +24,15 @@ variable "force_image_rebuild" {
 }
 
 variable "command" {
-  type = string
+  type = list(string)
 }
 
 variable "image_version" {
   type = string
   default = "latest"
+}
+
+
+variable "app_path" {
+  type = string
 }

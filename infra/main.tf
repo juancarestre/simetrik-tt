@@ -48,6 +48,7 @@ module "k8s_apps" {
     app_name = "nea-translator"
     container_port = 8000
     force_image_rebuild = true
-    command = "pipenv run start_container"
-    image_version = "2"
+    command = ["pipenv", "run", "start_container"]
+    image_version = "7"
+    app_path = "../apps/nea-translator/"
 }
