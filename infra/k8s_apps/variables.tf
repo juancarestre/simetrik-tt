@@ -26,3 +26,8 @@ variable "force_image_rebuild" {
 variable "command" {
   type = string
 }
+
+variable "image_version" {
+  type = string
+  default = "latest"
+}

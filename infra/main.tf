@@ -49,4 +49,5 @@ module "k8s_apps" {
     container_port = 8000
     force_image_rebuild = true
     command = "pipenv run start_container"
+    image_version = "2"
 }

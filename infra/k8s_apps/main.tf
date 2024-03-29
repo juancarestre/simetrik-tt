@@ -22,7 +22,7 @@ resource "kubernetes_manifest" "deployment" {
         "spec" = {
           "containers" = [
             {
-              "image" = "${aws_ecr_repository.ecr_repo.repository_url}:latest"
+              "image" = "${aws_ecr_repository.ecr_repo.repository_url}:${image_version}"
               "imagePullPolicy" = "Always"
               "name" = "${var.app_name}"
               "command" = ["sleep 300"]
