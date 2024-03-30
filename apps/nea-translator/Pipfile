@@ -8,6 +8,8 @@ grpcio = "*"
 grpcio-tools = "*"
 fastapi = "*"
 uvicorn = "*"
+pytest = "*"
+httpx = "*"
 
 [dev-packages]
 
@@ -18,3 +20,4 @@ python_version = "3.9"
 build = "python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. nea-translator.proto"
 start = "uvicorn api_server:app --reload"
 start_container= "uvicorn api_server:app --host 0.0.0.0 --port 8000"
+test = "pytest"

@@ -18,22 +18,9 @@ variable "repository_url" {
   type = string
 }
 
-
-variable "AWS_ACCESS_KEY_ID" {
-  type = string
-  sensitive = true
-}
-
-variable "AWS_ACCESS_KEY_SECRET" {
-  type = string
-  sensitive = true
-}
-
-variable "aws_profile" {
-  type = string
-}
-
-variable "OPENAI_API_KEY" {
-  type = string
-  sensitive = true
+variable "environment_variables" {
+    type = list(object({
+      name = string
+      value = string
+    }))
 }

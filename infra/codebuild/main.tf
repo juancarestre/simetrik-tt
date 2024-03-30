@@ -85,19 +85,11 @@ resource "aws_codebuild_project" "this" {
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode = true
 
-
     dynamic "environment_variable" {
-      for_each = {
-        "AWS_ACCESS_KEY_ID"     = var.AWS_ACCESS_KEY_ID
-        "AWS_ACCESS_KEY_SECRET" = var.AWS_ACCESS_KEY_SECRET
-        "AWS_PROFILE"           = var.aws_profile
-        "AWS_REGION"            = var.aws_region
-        "AWS_ACCOUNT_ID"        = var.account_id
-        "OPENAI_API_KEY"        = var.OPENAI_API_KEY
-      }
+      for_each = var.environment_variables
       content {
-        name  = environment_variable.key
-        value = environment_variable.value
+        name  = environment_variable.value.name
+        value = environment_variable.value.value
       }
     }
 

@@ -28,5 +28,8 @@ phases:
       - terraform init -backend-config=tf_backend.conf
   build:
     commands:
-      - ls
+      - cd ../apps/nea-translator/
+      - docker build . -f dockerfile.local  -t nea-translator-test
+      - docker container run nea-translator-test pipenv run test
+      - cd ../../infra
       - terraform plan

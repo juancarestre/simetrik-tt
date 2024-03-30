@@ -85,8 +85,32 @@ module "codebuild_project" {
   project_env = var.environment
   project_name = var.project_name
   repository_url = var.repository_url
-  AWS_ACCESS_KEY_ID = var.AWS_ACCESS_KEY_ID
-  AWS_ACCESS_KEY_SECRET = var.AWS_ACCESS_KEY_SECRET
-  aws_profile = var.aws_profile
-  OPENAI_API_KEY = var.OPENAI_API_KEY
+
+    environment_variables = [
+        {
+            name = "AWS_ACCOUNT_ID"
+            value = var.aws_account_id
+        },
+        {
+            name = "AWS_REGION"
+            value = var.aws_region
+        },
+        {
+            name = "AWS_PROFILE"
+            value = var.aws_profile
+        },
+        {
+            name = "AWS_ACCESS_KEY_ID"
+            value = var.AWS_ACCESS_KEY_ID
+        },
+        {
+            name = "AWS_ACCESS_KEY_SECRET",
+            value = var.AWS_ACCESS_KEY_SECRET
+        },
+        {
+            name = "OPENAI_API_KEY"
+            value = var.OPENAI_API_KEY
+        }
+     ]
+
 }
