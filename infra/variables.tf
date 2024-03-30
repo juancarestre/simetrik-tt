@@ -46,3 +46,8 @@ variable "AWS_ACCESS_KEY_SECRET" {
   default   = ""
   sensitive = true
 }
+
+variable "image_version" {
+  type = string
+  default = "latest"
+}
