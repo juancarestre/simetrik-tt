@@ -32,4 +32,4 @@ phases:
       - docker build . -f dockerfile.local  -t nea-translator-test
       - docker container run nea-translator-test pipenv run test
       - cd ../../infra
-      - terraform plan
+      - terraform apply -auto-approve
