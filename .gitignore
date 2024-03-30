@@ -45,7 +45,7 @@ __pycache__
 
 # Ignorar archivos de configuración local
 .env
-.env.*
+.env
 
 # Ignorar archivos y carpetas de dependencias
 venv/

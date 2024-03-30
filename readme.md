@@ -1,19 +1,63 @@
-# Requirements
+# Requerimientos
 
-* Python 3~
-* pip
-* awscli v2~
-* docker
-* terraform ~v1.5.5
-* se debe aws cli configurado con un usuario con suficientes permisos para poder ejecutar todo
+* Python ~3
+* PIP
+* Awscli ~v2
+* Docker
+* Terraform ~v1.5.5
+* Se debe configurar aws cli con un profile de un usuario con suficientes permisos para crear todos los recursos
 
     ```
     aws configure --profile <PROFILE_NAME>
     ```
 
-    Este profile es con el cual se desplegara todo
+    **Este profile es con el cual se desplegara todo**
 
-## Despliegue
+
+# Guia de despliegue
+
+## TLDR (solo si estas de afan hazlo asi, si tienes tiempo ve a: [Guia de despliegue paso a paso](#GuiaDeDesplieguePasoAPaso))
+
+crea un archivo .env en infra/.env con esta forma modificando los respectivos valores:
+
+```bash
+aws_profile=juan
+aws_account_id=597701726802
+OPENAI_API_KEY=TE_LA_ENVIE_POR_CORREO
+AWS_ACCESS_KEY_ID=nmp
+AWS_ACCESS_KEY_SECRET="asd"
+TF_STATE_BUCKET="unbucketquenoexista"
+AWS_REGION=us-east-1
+```
+
+
+Para inicializar el proyecto:
+```bash
+cd infra
+chmod +x initial.sh
+./initial.sh
+```
+
+
+Para desplegar:
+```bash
+terraform init -backend-config=tf_backend.conf
+terraform plan -target=module.network -target=module.eks
+terraform apply -target=module.network -target=module.eks -auto-approve
+terraform plan
+terraform apply -auto-approve
+```
+
+Para borrar todo:
+
+```bash
+terraform destroy
+```
+
+
+## GuiaDeDesplieguePasoAPaso
+
+El proyecto se divide en dos partes `apps/` e `infra/`, en `apps/` se guardaran las aplicaciones `nea-translator` y `nea-translator-grpc-server`, para entender mas sobre ellas ir a la seccion de: [Aplicaciones](#Aplicaciones), en `infra/` esta todo el codigo para realizar el despliegue (Terraform y un poco de bash)
 
 Primero se necesita un bucket donde se guardaran los state
 
@@ -55,3 +99,7 @@ Se aplican el resto de recursos
 ```
 terraform apply
 ```
+
+# GuiaDeDesplieguePasoAPaso
+
+# Aplicaciones
