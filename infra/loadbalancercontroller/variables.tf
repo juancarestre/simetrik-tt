@@ -1,13 +1,13 @@
 variable "aws_region" {
-  type    = string
+  type = string
 }
 
 variable "environment" {
-  type    = string
+  type = string
 }
 
 variable "cluster_name" {
-  type    = string
+  type = string
 }
 
 variable "vpc_id" {

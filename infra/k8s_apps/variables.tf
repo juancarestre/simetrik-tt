@@ -7,7 +7,7 @@ variable "aws_profile" {
 }
 
 variable "aws_region" {
-    type = string
+  type = string
 }
 
 variable "aws_account_id" {
@@ -28,7 +28,7 @@ variable "command" {
 }
 
 variable "image_version" {
-  type = string
+  type    = string
   default = "latest"
 }
 
@@ -43,7 +43,7 @@ variable "create_ingress" {
 
 variable "envs" {
   type = list(object({
-    name = string,
+    name  = string,
     value = string
   }))
 }

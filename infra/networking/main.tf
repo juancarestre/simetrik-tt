@@ -1,37 +1,37 @@
 resource "aws_vpc" "this" {
-    cidr_block = var.cidr_block
-    enable_dns_support = true
-    enable_dns_hostnames = true
+  cidr_block           = var.cidr_block
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 }
 
 data "aws_availability_zones" "available" {
 }
 
 resource "aws_subnet" "private_subnet" {
-    count = var.count_private_subnet
-    cidr_block = cidrsubnet(var.cidr_block, 8, count.index + 128)
-    availability_zone = data.aws_availability_zones.available.names[count.index]
-    vpc_id = aws_vpc.this.id
-    map_public_ip_on_launch = false
-    tags = {
-        Name = "${var.environment}:Subnet:${var.project_name}:PrivateSubnet-${count.index}"
-        "kubernetes.io/role/internal-elb": 1
-        "kubernetes.io/cluster/${var.eks_cluster_name}": "shared"
-    }
+  count                   = var.count_private_subnet
+  cidr_block              = cidrsubnet(var.cidr_block, 8, count.index + 128)
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  vpc_id                  = aws_vpc.this.id
+  map_public_ip_on_launch = false
+  tags = {
+    Name = "${var.environment}:Subnet:${var.project_name}:PrivateSubnet-${count.index}"
+    "kubernetes.io/role/internal-elb" : 1
+    "kubernetes.io/cluster/${var.eks_cluster_name}" : "shared"
+  }
 
 }
 
 resource "aws_subnet" "public_subnet" {
-    count = var.count_public_subnet
-    cidr_block = cidrsubnet(var.cidr_block, 8, count.index)
-    availability_zone = data.aws_availability_zones.available.names[count.index]
-    vpc_id = aws_vpc.this.id
-    map_public_ip_on_launch = true
-    tags = {
-        Name = "${var.environment}:Subnet:${var.project_name}:PublicSubnet-${count.index}"
-        "kubernetes.io/role/elb": 1
-        "kubernetes.io/cluster/${var.eks_cluster_name}": "shared"
-    }
+  count                   = var.count_public_subnet
+  cidr_block              = cidrsubnet(var.cidr_block, 8, count.index)
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  vpc_id                  = aws_vpc.this.id
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "${var.environment}:Subnet:${var.project_name}:PublicSubnet-${count.index}"
+    "kubernetes.io/role/elb" : 1
+    "kubernetes.io/cluster/${var.eks_cluster_name}" : "shared"
+  }
 }
 
 resource "aws_internet_gateway" "this" {
@@ -42,7 +42,7 @@ resource "aws_internet_gateway" "this" {
 }
 
 resource "aws_eip" "vpc_nat_gateway_eip" {
-  domain           = "vpc"
+  domain = "vpc"
 }
 
 resource "aws_nat_gateway" "ineedinternet" {
@@ -73,7 +73,7 @@ resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.this.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.ineedinternet.id
   }
 

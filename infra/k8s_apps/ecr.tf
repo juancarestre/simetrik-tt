@@ -1,7 +1,7 @@
 resource "aws_ecr_repository" "ecr_repo" {
   name                 = var.app_name
   image_tag_mutability = "MUTABLE"
-  force_delete = true
+  force_delete         = true
 
   image_scanning_configuration {
     scan_on_push = false
@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "ecr_repo" {
 }
 
 locals {
-  dkr_img_src_sha256 = sha256(join("", [for f in fileset(".", "${var.app_path}**") : file(f)]))
+  dkr_img_src_sha256    = sha256(join("", [for f in fileset(".", "${var.app_path}**") : file(f)]))
   docker_build_and_push = <<-EOT
         cd ${var.app_path}
         docker build -t ${aws_ecr_repository.ecr_repo.repository_url}:${var.image_version} --platform=linux/amd64 .

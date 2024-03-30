@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "codebuild_role" {
-  name_prefix = "${var.project_name}-${var.project_env}-codebuild"
+  name_prefix        = "${var.project_name}-${var.project_env}-codebuild"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
@@ -67,15 +67,15 @@ resource "aws_iam_role_policy" "this" {
 }
 
 resource "aws_codebuild_project" "this" {
-  name          = "${var.project_name}-${var.project_env}"
-  service_role  = aws_iam_role.codebuild_role.arn
+  name         = "${var.project_name}-${var.project_env}"
+  service_role = aws_iam_role.codebuild_role.arn
 
   artifacts {
     type = "NO_ARTIFACTS"
   }
 
   cache {
-    type     = "NO_CACHE"
+    type = "NO_CACHE"
   }
 
   environment {
@@ -83,7 +83,7 @@ resource "aws_codebuild_project" "this" {
     image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
-    privileged_mode = true
+    privileged_mode             = true
 
     dynamic "environment_variable" {
       for_each = var.environment_variables

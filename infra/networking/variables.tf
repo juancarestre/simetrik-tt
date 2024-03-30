@@ -24,6 +24,6 @@ variable "environment" {
 }
 
 variable "eks_cluster_name" {
-  type = string
+  type    = string
   default = "no_cluster"
 }

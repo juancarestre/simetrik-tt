@@ -16,5 +16,5 @@ resource "aws_eks_addon" "eks_pod_identity_addon" {
 resource "aws_eks_addon" "coredns_addon" {
   cluster_name = aws_eks_cluster.this.name
   addon_name   = "coredns"
-  depends_on = [ aws_eks_node_group.this ]
+  depends_on   = [aws_eks_node_group.this]
 }

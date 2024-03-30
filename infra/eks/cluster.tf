@@ -8,7 +8,7 @@ resource "aws_eks_cluster" "this" {
 
   version = var.cluster_version
   access_config {
-    authentication_mode = var.authentication_mode
+    authentication_mode                         = var.authentication_mode
     bootstrap_cluster_creator_admin_permissions = var.bootstrap_creator_admin_access
   }
 
@@ -31,5 +31,5 @@ data "external" "thumbprint" {
 resource "aws_iam_openid_connect_provider" "this" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.external.thumbprint.result.thumbprint]
-  url             = "${aws_eks_cluster.this.identity.0.oidc.0.issuer}"
+  url             = aws_eks_cluster.this.identity.0.oidc.0.issuer
 }

@@ -1,9 +1,9 @@
 data "kubernetes_resource" "loadbalancerurl" {
-    depends_on = [ module.k8s_app_client ]
-  api_version    = "networking.k8s.io/v1"
-  kind           = "Ingress"
+  depends_on  = [module.k8s_app_client]
+  api_version = "networking.k8s.io/v1"
+  kind        = "Ingress"
   metadata {
-    name = "nea-translator"
+    name      = "nea-translator"
     namespace = "default"
   }
 }

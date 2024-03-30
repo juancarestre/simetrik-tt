@@ -11,30 +11,30 @@ variable "cluster_version" {
 }
 
 variable "authentication_mode" {
-  type = string
+  type    = string
   default = "API_AND_CONFIG_MAP"
 }
 
 variable "capacity_type" {
-  type = string
+  type    = string
   default = "SPOT"
 }
 
 variable "instance_types" {
-  type = list(string)
-  default = [ "t3.medium" ]
+  type    = list(string)
+  default = ["t3.medium"]
 }
 
 variable "node_scaling_config" {
-    type = object({
-      desired_size = number
-      max_size = number
-      min_size = number
-    })
+  type = object({
+    desired_size = number
+    max_size     = number
+    min_size     = number
+  })
 }
 
 variable "bootstrap_creator_admin_access" {
-  type = bool
+  type    = bool
   default = true
 }
 

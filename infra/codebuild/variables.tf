@@ -19,8 +19,8 @@ variable "repository_url" {
 }
 
 variable "environment_variables" {
-    type = list(object({
-      name = string
-      value = string
-    }))
+  type = list(object({
+    name  = string
+    value = string
+  }))
 }
