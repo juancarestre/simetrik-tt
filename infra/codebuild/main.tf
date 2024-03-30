@@ -114,6 +114,11 @@ resource "aws_codebuild_project" "this" {
       value = var.aws_profile
     }
 
+    environment_variable {
+      name  = "AWS_REGION"
+      value = var.aws_region
+    }
+
   }
 
   logs_config {
