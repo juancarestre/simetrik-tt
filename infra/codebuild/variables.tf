@@ -32,3 +32,8 @@ variable "AWS_ACCESS_KEY_SECRET" {
 variable "aws_profile" {
   type = string
 }
+
+variable "OPENAI_API_KEY" {
+  type = string
+  sensitive = true
+}

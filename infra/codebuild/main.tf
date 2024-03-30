@@ -119,6 +119,16 @@ resource "aws_codebuild_project" "this" {
       value = var.aws_region
     }
 
+    environment_variable {
+      name  = "AWS_ACCOUNT_ID"
+      value = var.account_id
+    }
+
+    environment_variable {
+      name  = "OPENAI_API_KEY"
+      value = var.OPENAI_API_KEY
+    }
+
   }
 
   logs_config {

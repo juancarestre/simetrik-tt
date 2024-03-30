@@ -88,4 +88,5 @@ module "codebuild_project" {
   AWS_ACCESS_KEY_ID = var.AWS_ACCESS_KEY_ID
   AWS_ACCESS_KEY_SECRET = var.AWS_ACCESS_KEY_SECRET
   aws_profile = var.aws_profile
+  OPENAI_API_KEY = var.OPENAI_API_KEY
 }
