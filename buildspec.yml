@@ -26,6 +26,7 @@ phases:
       - echo "AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"" >> terraform.tfvars
       - echo "AWS_ACCESS_KEY_SECRET=\"${AWS_ACCESS_KEY_SECRET}\"" >> terraform.tfvars
       - echo "image_version=\"${CODEBUILD_BUILD_NUMBER}\"" >> terraform.tfvars
+      - echo "force_image_rebuild=true" >> terraform.tfvars
       - terraform init -backend-config=tf_backend.conf
   build:
     commands:

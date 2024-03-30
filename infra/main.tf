@@ -48,9 +48,9 @@ module "k8s_app_client" {
   aws_region          = var.aws_region
   app_name            = "nea-translator"
   container_port      = 8000
-  force_image_rebuild = false
+  force_image_rebuild = var.force_image_rebuild
   command             = ["pipenv", "run", "start_container"]
-  image_version       = "latest"
+  image_version       = var.image_version
   app_path            = "../apps/nea-translator/"
   create_ingress      = true
   envs = [{
@@ -67,9 +67,9 @@ module "k8s_app_grpc_server" {
   aws_region          = var.aws_region
   app_name            = "nea-translator-grpc-server"
   container_port      = 50051
-  force_image_rebuild = false
+  force_image_rebuild = var.force_image_rebuild
   command             = ["pipenv", "run", "start_container"]
-  image_version       = "latest"
+  image_version       = var.image_version
   app_path            = "../apps/nea-translator-grpc-server/"
   create_ingress      = false
   envs = [{

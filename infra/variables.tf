@@ -51,3 +51,8 @@ variable "image_version" {
   type = string
   default = "latest"
 }
+
+variable "force_image_rebuild" {
+  type = bool
+  default = false
+}
