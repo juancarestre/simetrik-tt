@@ -100,8 +100,18 @@ resource "aws_codebuild_project" "this" {
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode = true
     environment_variable {
-      name  = "SOME_KEY1"
-      value = "SOME_VALUE1"
+      name  = "AWS_ACCESS_KEY_ID"
+      value = var.AWS_ACCESS_KEY_ID
+    }
+
+    environment_variable {
+      name  = "AWS_ACCESS_KEY_SECRET"
+      value = var.AWS_ACCESS_KEY_SECRET
+    }
+
+    environment_variable {
+      name  = "AWS_PROFILE"
+      value = var.aws_profile
     }
 
   }

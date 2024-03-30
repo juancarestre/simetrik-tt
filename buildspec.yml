@@ -13,3 +13,9 @@ phases:
       - aws --version
       - docker --version
       - pip --version
+  pre_build:
+    commands:
+      - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile "$AWS_PROFILE"
+      - aws configure set aws_secret_access_key "$AWS_ACCESS_KEY_SECRET" --profile "$AWS_PROFILE"
+      - aws configure set region "$AWS_REGION" --profile "$AWS_PROFILE"
+      - aws sts get-caller-identity --profile "$AWS_PROFILE"

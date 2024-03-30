@@ -34,3 +34,15 @@ variable "repository_url" {
   type = string
   default = "https://github.com/juancarestre/simetrik-tt"
 }
+
+variable "AWS_ACCESS_KEY_ID" {
+  type = string
+  default = ""
+  sensitive = true
+}
+
+variable "AWS_ACCESS_KEY_SECRET" {
+  type = string
+  default = ""
+  sensitive = true
+}

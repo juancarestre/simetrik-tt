@@ -17,3 +17,18 @@ variable "aws_region" {
 variable "repository_url" {
   type = string
 }
+
+
+variable "AWS_ACCESS_KEY_ID" {
+  type = string
+  sensitive = true
+}
+
+variable "AWS_ACCESS_KEY_SECRET" {
+  type = string
+  sensitive = true
+}
+
+variable "aws_profile" {
+  type = string
+}

@@ -85,4 +85,7 @@ module "codebuild_project" {
   project_env = var.environment
   project_name = var.project_name
   repository_url = var.repository_url
+  AWS_ACCESS_KEY_ID = var.AWS_ACCESS_KEY_ID
+  AWS_ACCESS_KEY_SECRET = var.AWS_ACCESS_KEY_SECRET
+  aws_profile = var.aws_profile
 }
