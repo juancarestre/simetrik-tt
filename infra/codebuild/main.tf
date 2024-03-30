@@ -1,11 +1,3 @@
-# resource "aws_s3_bucket" "codebuild_bucket" {
-#   bucket_prefix = "${var.project_name}-${var.project_env}-codebuild"
-# }
-
-# resource "aws_s3_bucket_acl" "example" {
-#   bucket = aws_s3_bucket.example.id
-#   acl    = "private"
-# }
 
 data "aws_iam_policy_document" "assume_role" {
   statement {
@@ -66,14 +58,7 @@ data "aws_iam_policy_document" "permissions" {
     }
   }
 
-#   statement {
-#     effect  = "Allow"
-#     actions = ["s3:*"]
-#     resources = [
-#       aws_s3_bucket.codebuild_bucket.arn,
-#       "${aws_s3_bucket.codebuild_bucket.arn}/*",
-#     ]
-#   }
+
 }
 
 resource "aws_iam_role_policy" "this" {
@@ -151,4 +136,21 @@ resource "aws_codebuild_project" "this" {
 
   source_version = "master"
 
+}
+
+
+resource "aws_codebuild_webhook" "this" {
+  project_name = aws_codebuild_project.this.name
+  build_type   = "BUILD"
+  filter_group {
+    filter {
+      type    = "EVENT"
+      pattern = "PUSH"
+    }
+
+    filter {
+      type    = "BASE_REF"
+      pattern = "master"
+    }
+  }
 }
