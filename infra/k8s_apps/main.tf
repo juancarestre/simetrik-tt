@@ -1,4 +1,5 @@
 resource "kubernetes_manifest" "deployment" {
+    depends_on = [ null_resource.build_push_dkr_img ]
   manifest = {
     "apiVersion" = "apps/v1"
     "kind" = "Deployment"
@@ -31,6 +32,12 @@ resource "kubernetes_manifest" "deployment" {
                   "containerPort" = "${var.container_port}"
                 },
               ]
+              "env" = [
+                {
+                    "name" = "${var.envs[0].name}"
+                    "value" = "${var.envs[0].value}"
+                }
+              ]
             },
           ]
         }
@@ -40,6 +47,7 @@ resource "kubernetes_manifest" "deployment" {
 }
 
 resource "kubernetes_manifest" "service" {
+        depends_on = [ null_resource.build_push_dkr_img ]
   manifest = {
     "apiVersion" = "v1"
     "kind" = "Service"
@@ -64,6 +72,8 @@ resource "kubernetes_manifest" "service" {
 }
 
 resource "kubernetes_manifest" "ingress" {
+    count = var.create_ingress ? 1 : 0
+        depends_on = [ null_resource.build_push_dkr_img ]
   manifest = {
     "apiVersion" = "networking.k8s.io/v1"
     "kind" = "Ingress"

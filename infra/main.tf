@@ -10,6 +10,7 @@ module "network" {
 }
 
 module "eks" {
+    depends_on = [ module.network ]
     source = "./eks"
     eks_cluster_name = "${var.project_name}-${var.environment}-cluster"
     private_subnet_ids = module.network.private_subnet_ids
@@ -23,13 +24,13 @@ module "eks" {
 }
 
 resource "null_resource" "get_kube_config" {
+  depends_on = [ module.eks ]
   provisioner "local-exec" {
     command     = "aws eks update-kubeconfig --region ${var.aws_region} --name ${module.eks.cluster_name} --profile ${var.aws_profile}"
     interpreter = ["bash", "-c"]
   }
 }
 
-# https://docs.aws.amazon.com/eks/latest/userguide/lbc-manifest.htmlå
 module "load_balancer_controller" {
     source = "./loadbalancercontroller"
     aws_region = var.aws_region
@@ -39,16 +40,49 @@ module "load_balancer_controller" {
     oidc_provider_arn = module.eks.cluster_openid_oidc_provider_arn
 }
 
-module "k8s_apps" {
+module "k8s_app_client" {
     source = "./k8s_apps"
-    depends_on = [ module.load_balancer_controller ]
+    depends_on = [ module.load_balancer_controller, module.eks, module.network ]
     aws_profile = var.aws_profile
     aws_account_id = var.aws_account_id
     aws_region = var.aws_region
     app_name = "nea-translator"
     container_port = 8000
-    force_image_rebuild = true
+    force_image_rebuild = false
     command = ["pipenv", "run", "start_container"]
-    image_version = "7"
+    image_version = "latest"
     app_path = "../apps/nea-translator/"
+    create_ingress = true
+    envs = [{
+        name: "GRPC_SERVER"
+        value: "nea-translator-grpc-server:50051"
+    }]
+}
+
+module "k8s_app_grpc_server" {
+    source = "./k8s_apps"
+    depends_on = [ module.load_balancer_controller, module.eks, module.network ]
+    aws_profile = var.aws_profile
+    aws_account_id = var.aws_account_id
+    aws_region = var.aws_region
+    app_name = "nea-translator-grpc-server"
+    container_port = 50051
+    force_image_rebuild = false
+    command = ["pipenv", "run", "start_container"]
+    image_version = "latest"
+    app_path = "../apps/nea-translator-grpc-server/"
+    create_ingress = false
+    envs = [ {
+      name = "OPENAI_API_KEY"
+      value = var.OPENAI_API_KEY
+    } ]
+}
+
+module "codebuild_project" {
+  source = "./codebuild"
+  account_id = var.aws_account_id
+  aws_region = var.aws_region
+  project_env = var.environment
+  project_name = var.project_name
+  repository_url = var.repository_url
 }

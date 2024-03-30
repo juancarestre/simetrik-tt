@@ -25,3 +25,12 @@ variable "environment" {
 variable "aws_account_id" {
   type = string
 }
+
+variable "OPENAI_API_KEY" {
+  type = string
+}
+
+variable "repository_url" {
+  type = string
+  default = "https://github.com/juancarestre/simetrik-tt"
+}

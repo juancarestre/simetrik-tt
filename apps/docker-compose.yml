@@ -5,6 +5,9 @@ services:
     command: pipenv run start_container
     build:
       context: ./nea-translator
+      dockerfile: dockerfile.local
+      args:
+        - APP_VERSION=local-docker-compose
     environment:
       - GRPC_SERVER=nea-translator-grpc-server:50051
     ports:
@@ -16,6 +19,7 @@ services:
     command: pipenv run start_container
     build:
       context: ./nea-translator-grpc-server
+      dockerfile: dockerfile.local
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     ports:

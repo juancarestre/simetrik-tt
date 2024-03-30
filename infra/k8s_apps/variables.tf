@@ -36,3 +36,14 @@ variable "image_version" {
 variable "app_path" {
   type = string
 }
+
+variable "create_ingress" {
+  type = bool
+}
+
+variable "envs" {
+  type = list(object({
+    name = string,
+    value = string
+  }))
+}
