@@ -19,12 +19,12 @@ phases:
       - aws configure set aws_secret_access_key "$AWS_ACCESS_KEY_SECRET" --profile "$AWS_PROFILE"
       - aws configure set region "$AWS_REGION" --profile "$AWS_PROFILE"
       - aws sts get-caller-identity --profile "$AWS_PROFILE"
+      - cd infra
       - echo "aws_profile=\"${AWS_PROFILE}\"" >> terraform.tfvars
       - echo "aws_account_id=\"${AWS_ACCOUNT_ID}\"" >> terraform.tfvars
       - echo "OPENAI_API_KEY=\"${OPENAI_API_KEY}\"" >> terraform.tfvars
       - echo "AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"" >> terraform.tfvars
       - echo "AWS_ACCESS_KEY_SECRET=\"${AWS_ACCESS_KEY_SECRET}\"" >> terraform.tfvars
-      - cd infra
       - terraform init -backend-config=tf_backend.conf
   build:
     commands:
