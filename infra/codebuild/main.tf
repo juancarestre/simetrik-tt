@@ -84,34 +84,21 @@ resource "aws_codebuild_project" "this" {
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode = true
-    environment_variable {
-      name  = "AWS_ACCESS_KEY_ID"
-      value = var.AWS_ACCESS_KEY_ID
-    }
 
-    environment_variable {
-      name  = "AWS_ACCESS_KEY_SECRET"
-      value = var.AWS_ACCESS_KEY_SECRET
-    }
 
-    environment_variable {
-      name  = "AWS_PROFILE"
-      value = var.aws_profile
-    }
-
-    environment_variable {
-      name  = "AWS_REGION"
-      value = var.aws_region
-    }
-
-    environment_variable {
-      name  = "AWS_ACCOUNT_ID"
-      value = var.account_id
-    }
-
-    environment_variable {
-      name  = "OPENAI_API_KEY"
-      value = var.OPENAI_API_KEY
+    dynamic "environment_variable" {
+      for_each = {
+        "AWS_ACCESS_KEY_ID"     = var.AWS_ACCESS_KEY_ID
+        "AWS_ACCESS_KEY_SECRET" = var.AWS_ACCESS_KEY_SECRET
+        "AWS_PROFILE"           = var.aws_profile
+        "AWS_REGION"            = var.aws_region
+        "AWS_ACCOUNT_ID"        = var.account_id
+        "OPENAI_API_KEY"        = var.OPENAI_API_KEY
+      }
+      content {
+        name  = environment_variable.key
+        value = environment_variable.value
+      }
     }
 
   }
@@ -139,18 +126,18 @@ resource "aws_codebuild_project" "this" {
 }
 
 
-resource "aws_codebuild_webhook" "this" {
-  project_name = aws_codebuild_project.this.name
-  build_type   = "BUILD"
-  filter_group {
-    filter {
-      type    = "EVENT"
-      pattern = "PUSH"
-    }
+# resource "aws_codebuild_webhook" "this" {
+#   project_name = aws_codebuild_project.this.name
+#   build_type   = "BUILD"
+#   filter_group {
+#     filter {
+#       type    = "EVENT"
+#       pattern = "PUSH"
+#     }
 
-    filter {
-      type    = "BASE_REF"
-      pattern = "master"
-    }
-  }
-}
+#     filter {
+#       type    = "HEAD_REF"
+#       pattern = "^refs/heads/master"
+#     }
+#   }
+# }
