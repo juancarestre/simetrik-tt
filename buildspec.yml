@@ -28,5 +28,5 @@ phases:
       - terraform init -backend-config=tf_backend.conf
   build:
     commands:
-      - cd infra
+      - ls
       - terraform plan
