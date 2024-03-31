@@ -5,6 +5,7 @@
 4. [Diagrama de arquitectura](#diagrama-de-arquitectura)
 5. [Explicación rápida](#explicación-rápida)
 6. [Guía de despliegue](#guía-de-despliegue)
+  * [¿Por qué estas tfvars?](#¿por-qué-estas-tfvars)
 7. [Explicación Networking](#explicación-networking)
 8. [Aplicaciones](#aplicaciones)
 9. [CI/CD](#cicd)
@@ -21,8 +22,8 @@ Crea un archivo .env en infra/.env con esta forma modificando los respectivos va
 aws_profile=juan
 aws_account_id=597701726802
 OPENAI_API_KEY=TE_LA_ENVIÉ_POR_CORREO
-AWS_ACCESS_KEY_ID=nmp
-AWS_ACCESS_KEY_SECRET="asd"
+AWS_ACCESS_KEY_ID="aws access key del profile"
+AWS_ACCESS_KEY_SECRET="secret key del profile"
 TF_STATE_BUCKET="unbucketquenoexista"
 AWS_REGION=us-east-1
 ```
