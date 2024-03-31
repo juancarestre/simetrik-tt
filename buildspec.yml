@@ -16,6 +16,7 @@ phases:
   pre_build:
     commands:
       - PROFILE_TO_USE=$(echo "$AWS_PROFILE")
+      - rm -rf ~/.aws
       - unset AWS_PROFILE
       - export ASSUME_ROLE_ARN="arn:aws:iam::597701726802:role/simetrik-tt-dev-codebuild20240331141712836900000001" #
       - export TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test) #
@@ -27,6 +28,7 @@ phases:
       - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile "$AWS_PROFILE"
       - aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile "$AWS_PROFILE"
       - aws configure set region "$AWS_REGION" --profile "$AWS_PROFILE"
+      - cat ~/.aws/credentials
       # enddd
 
 
