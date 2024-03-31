@@ -97,16 +97,16 @@ module "codebuild_project" {
     },
     {
       name  = "AWS_PROFILE"
-      value = "default" # var.aws_profile #TODO:Here
+      value = var.aws_profile
     },
-    # {
-    #   name  = "AWS_ACCESS_KEY_ID"
-    #   value = var.AWS_ACCESS_KEY_ID
-    # },
-    # {
-    #   name  = "AWS_ACCESS_KEY_SECRET",
-    #   value = var.AWS_ACCESS_KEY_SECRET
-    # },
+    {
+      name  = "AWS_ACCESS_KEY_ID"
+      value = var.AWS_ACCESS_KEY_ID
+    },
+    {
+      name  = "AWS_ACCESS_KEY_SECRET",
+      value = var.AWS_ACCESS_KEY_SECRET
+    },
     {
       name  = "OPENAI_API_KEY"
       value = var.OPENAI_API_KEY

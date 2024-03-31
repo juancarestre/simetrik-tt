@@ -11,7 +11,7 @@
 
 # Aplicación
 
-Esto es la infraestructura como código usando Terraform para desplegar un cluster de EKS en una nueva VPC y un par de aplicaciones que serán deployments dentro del cluster.
+Esto es una infraestructura como código usando Terraform para desplegar un cluster de EKS en una nueva VPC y un par de aplicaciones que serán deployments dentro del cluster de Kubernetes.
 
 ### TLDR (solo si estás de afán hazlo así, si tienes tiempo ve a: [Guía de despliegue paso a paso](#guía-de-despliegue-paso-a-paso))
 
@@ -122,8 +122,8 @@ aws_region = "<AWS_REGION>"
 
 #### ¿Por qué estas tfvars?
 
-* Mi app hace un llamado al API de OpenAI, `OPENAI_API_KEY` la enviaré por correo y la desactivaré después de unos días. Si tienes una key de OpenAI que funcione también la puedes usar.
-* `AWS_ACCESS_KEY_ID` y `AWS_ACCESS_KEY_SECRET` las uso para aprovisionar los secretos del agente de CodeBuild. Sé que lo puedo hacer con un rol pero debido a que uso un `AWS_PROFILE` en toda la infra como código y no tengo mucho tiempo, de momento lo dejo así (deuda técnica).
+* Mi app GRPC hace un llamado al API de OpenAI, `OPENAI_API_KEY` la enviaré por correo y la desactivaré después de unos días. Si tienes una key de OpenAI que funcione también la puedes usar.
+* `AWS_ACCESS_KEY_ID` y `AWS_ACCESS_KEY_SECRET` las uso para aprovisionar los secretos del agente de CodeBuild. Sé que lo puedo hacer con un rol pero debido a que uso un `AWS_PROFILE` en toda la infra como código y no tengo mucho tiempo, de momento lo dejo así (`deuda técnica`).
 
 Después se debe inicializar el backend S3 (no use lock con DynamoDB ya que al trabajar solo no lo vi necesario).
 

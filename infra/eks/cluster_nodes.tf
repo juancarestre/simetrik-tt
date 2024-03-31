@@ -13,9 +13,9 @@ resource "aws_eks_node_group" "this" {
   capacity_type  = var.capacity_type
   instance_types = var.instance_types
 
-  remote_access { #TODO: temporal
-    ec2_ssh_key = "studying-linux"
-  }
+  # remote_access { #TODO: temporal
+  #   ec2_ssh_key = "studying-linux"
+  # }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.

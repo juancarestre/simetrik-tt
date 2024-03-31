@@ -15,32 +15,16 @@ phases:
       - pip --version
   pre_build:
     commands:
-      - rm -rf ~/.aws
-      - export ASSUME_ROLE_ARN="arn:aws:iam::597701726802:role/simetrik-tt-dev-codebuild20240331141712836900000001" #
-      - export TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name test) #
-      - export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r '.Credentials.AccessKeyId') #
-      - export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r '.Credentials.SecretAccessKey') #
-      - export AWS_SESSION_TOKEN=$(echo "${TEMP_ROLE}" | jq -r '.Credentials.SessionToken') #
-      - export AWS_PROFILE=$(echo "default")
-      - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile "$AWS_PROFILE" #TODO: here
-      - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile "$AWS_PROFILE"
-      - aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile "$AWS_PROFILE"
+      - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile "$AWS_PROFILE"
+      - aws configure set aws_secret_access_key "$AWS_ACCESS_KEY_SECRET" --profile "$AWS_PROFILE"
       - aws configure set region "$AWS_REGION" --profile "$AWS_PROFILE"
-      - aws sts get-caller-identity --profile "$AWS_PROFILE"
-      - cat ~/.aws/credentials
-      # enddd
-
-
-      # - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile "$AWS_PROFILE" #TODO: here
-      # - aws configure set aws_secret_access_key "$AWS_ACCESS_KEY_SECRET" --profile "$AWS_PROFILE"
-      # - aws configure set region "$AWS_REGION" --profile "$AWS_PROFILE"
       - aws sts get-caller-identity --profile "$AWS_PROFILE"
       - cd infra
       - echo "aws_profile=\"${AWS_PROFILE}\"" >> terraform.tfvars
       - echo "aws_account_id=\"${AWS_ACCOUNT_ID}\"" >> terraform.tfvars
       - echo "OPENAI_API_KEY=\"${OPENAI_API_KEY}\"" >> terraform.tfvars
-      # - echo "AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"" >> terraform.tfvars
-      # - echo "AWS_ACCESS_KEY_SECRET=\"${AWS_ACCESS_KEY_SECRET}\"" >> terraform.tfvars
+      - echo "AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"" >> terraform.tfvars
+      - echo "AWS_ACCESS_KEY_SECRET=\"${AWS_ACCESS_KEY_SECRET}\"" >> terraform.tfvars
       - echo "image_version=\"${CODEBUILD_BUILD_NUMBER}\"" >> terraform.tfvars
       - echo "force_image_rebuild=true" >> terraform.tfvars
       - terraform init -backend-config=tf_backend.conf
