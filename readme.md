@@ -1,31 +1,30 @@
 # Table of Contents
-1. [Aplicacion](#aplicacion)
-2. [TLDR](#tldr-solo-si-estas-de-afan-hazlo-asi-si-tienes-tiempo-ve-a-guia-de-despliegue-paso-a-paso)
+1. [Aplicación](#aplicación)
+2. [TLDR](#tldr-solo-si-estás-de-afán-hazlo-así-si-tienes-tiempo-ve-a-guía-de-despliegue-paso-a-paso)
 3. [Requerimientos](#requerimientos)
 4. [Diagrama de arquitectura](#diagrama-de-arquitectura)
-5. [Explicacion rapida](#explicacion-rapida)
-6. [Guia de despliegue](#guia-de-despliegue)
-7. [Explicacion Networking](#explicacion-networking)
+5. [Explicación rápida](#explicación-rápida)
+6. [Guía de despliegue](#guía-de-despliegue)
+7. [Explicación Networking](#explicación-networking)
 8. [Aplicaciones](#aplicaciones)
 
-# Aplicacion
+# Aplicación
 
-Esto es la infraestructura como codigo usando Terraform para desplegar un cluster de eks en una nueva vpc y un par de aplicaciones que seran deployments dentro del cluster.
+Esto es la infraestructura como código usando Terraform para desplegar un cluster de EKS en una nueva VPC y un par de aplicaciones que serán deployments dentro del cluster.
 
-### TLDR (solo si estas de afan hazlo asi, si tienes tiempo ve a: [Guia de despliegue paso a paso](#guia-de-despliegue-paso-a-paso)
+### TLDR (solo si estás de afán hazlo así, si tienes tiempo ve a: [Guía de despliegue paso a paso](#guía-de-despliegue-paso-a-paso))
 
-crea un archivo .env en infra/.env con esta forma modificando los respectivos valores:
+Crea un archivo .env en infra/.env con esta forma modificando los respectivos valores:
 
 ```bash
 aws_profile=juan
 aws_account_id=597701726802
-OPENAI_API_KEY=TE_LA_ENVIE_POR_CORREO
+OPENAI_API_KEY=TE_LA_ENVIÉ_POR_CORREO
 AWS_ACCESS_KEY_ID=nmp
 AWS_ACCESS_KEY_SECRET="asd"
 TF_STATE_BUCKET="unbucketquenoexista"
 AWS_REGION=us-east-1
 ```
-
 
 Para inicializar el proyecto:
 ```bash
@@ -33,7 +32,6 @@ cd infra
 chmod +x initial.sh
 ./initial.sh
 ```
-
 
 Para desplegar:
 ```bash
@@ -50,8 +48,6 @@ Para borrar todo:
 terraform destroy
 ```
 
-
-
 # Requerimientos
 
 * Python ~3
@@ -64,47 +60,46 @@ terraform destroy
     ```
     aws configure --profile <PROFILE_NAME>
     ```
-    **Este profile es con el cual se desplegara todo**
+    **Este profile es con el cual se desplegará todo**
 
-* El usuario que ejecuta terraform debe tener permisos para ejecutar docker (Ya que estoy buildeando las imagenes de las apps durante el proceso)
+* El usuario de la maquina que ejecuta terraform debe tener permisos para ejecutar docker (Ya que estoy buildeando las imágenes de las apps durante el proceso)
 
 # Diagrama de arquitectura
 
 ![arquitectura](simetrik.drawio.png)
 
-# Explicacion rapida
+# Explicación rápida
 
-Tengo las apps y la infra separadas, no me gusta usar terraform para aprovisionar codigo (osea usar terraform dentro del proceso de CD) pero dado que la prueba requeria desplegar las apps con un modulo hice lo siguiente
+Tengo las apps y la infra separadas, no me gusta usar terraform para aprovisionar código (es decir, usar terraform dentro del proceso de CD), pero dado que la prueba requería desplegar las apps con un módulo hice lo siguiente:
 
-* modulo `networking`: crea todo lo de vpc, subnets, igw, nat, ECT
-* modulo `eks`: crea un cluster de eks con lo minimo necesariopara andar (addons, cni, coredns, nodegroups, ETC)
-* modulo `loadbalancercontroller`: el controlador para permitir la creacion de ALBs bajo demanda de ingress
-* modulo `k8s_apps`: define los manifiestos de kubernetes para las aplicaciones y todo lo que necesitan
+* Módulo `networking`: crea todo lo de VPC, subnets, IGW, NAT, etc.
+* Módulo `eks`: crea un cluster de EKS con lo mínimo necesario para andar (addons, cni, coredns, nodegroups, etc.).
+* Módulo `loadbalancercontroller`: el controlador para permitir la creación de ALBs bajo demanda de ingress.
+* Módulo `k8s_apps`: define los manifiestos de Kubernetes para las aplicaciones y todo lo que necesitan.
 
-De esta manera se desligan las aplicaciones de la infraestructura, siendo asi que si hay cambios en las apps el unico modulo que detectara cambios es `k8s_apps` y no el modulo `eks` (que desde mi punto de vista solo debe desplegar un cluster con lo minimo necesario)
+De esta manera se desligan las aplicaciones de la infraestructura, siendo así que si hay cambios en las apps el único módulo que detectará cambios es `k8s_apps` y no el módulo `eks` (que desde mi punto de vista solo debe desplegar un cluster con lo mínimo necesario).
 
-Se usaron varios providers: aws, helm, y kubernetes
+Se usaron varios providers: aws, helm y kubernetes.
 
-# Guia de despliegue
+# Guía de despliegue
 
-El proyecto se divide en dos partes `apps/` e `infra/`, en `apps/` se guardaran las aplicaciones `nea-translator` y `nea-translator-grpc-server`, para entender mas sobre ellas ir a la seccion de: [Aplicaciones](#aplicaciones), en `infra/` esta todo el codigo para realizar el despliegue (Terraform y un poco de bash)
+El proyecto se divide en dos partes: `apps/` e `infra/`. En `apps/` se guardarán las aplicaciones `nea-translator` y `nea-translator-grpc-server`. Para entender más sobre ellas, ir a la sección de: [Aplicaciones](#aplicaciones). En `infra/` está todo el código para realizar el despliegue (Terraform y un poco de bash).
 
-Verifica que tienes los [Requerimientos](#requerimientos)
+Verifica que tienes los [Requerimientos](#requerimientos).
 
-
-Debes crear un bucket donde se guardaran los `tfstate`
+Debes crear un bucket donde se guardarán los `tfstate`.
 
 ```
 aws s3 mb s3://<BUCKET_STATES_NAME> --profile <AWS_PROFILE>
 ```
 
-Otorgar permisos de ejecucion al script que se trae el `THUMBPRINT` del cluster para que todo sea automatizado
+Otorgar permisos de ejecución al script que se trae el `THUMBPRINT` del cluster para que todo sea automatizado.
 
 ```
 chmod +x infra/eks/thumbprint.sh
 ```
 
-Se debe llenar el `tf_backend.conf` con los valores requeridos
+Se debe llenar el `tf_backend.conf` con los valores requeridos.
 
 ```conf
 bucket="<BUCKET_STATES_NAME>"
@@ -113,53 +108,53 @@ region="<AWS_REGION>"
 profile="<AWS_PROFILE>"
 ```
 
-Crea el `terraform.tfvars`, te puedes inspirar en `terraform.tfvars.example`
+Crea el `terraform.tfvars`, te puedes inspirar en `terraform.tfvars.example`.
 
 ```conf
 aws_profile="<AWS_PROFILE>"
 aws_account_id = "<AWS_ACCOUNT_ID>"
-OPENAI_API_KEY="Una key temporal del api de openai que seguramente te la enviare al correo"
+OPENAI_API_KEY="Una key temporal del api de OpenAI que seguramente te la enviaré al correo"
 AWS_ACCESS_KEY_ID="aws access key del profile"
 AWS_ACCESS_KEY_SECRET="secret key del profile"
 aws_region = "<AWS_REGION>"
 ```
 
+#### ¿Por qué estas tfvars?
 
-#### Porque estas tfvars?
+* Mi app hace un llamado al API de OpenAI, `OPENAI_API_KEY` la enviaré por correo y la desactivaré después de unos días. Si tienes una key de OpenAI que funcione también la puedes usar.
+* `AWS_ACCESS_KEY_ID` y `AWS_ACCESS_KEY_SECRET` las uso para aprovisionar los secretos del agente de CodeBuild. Sé que lo puedo hacer con un rol pero debido a que uso un `AWS_PROFILE` en toda la infra como código y no tengo mucho tiempo, de momento lo dejo así (deuda técnica).
 
-* Mi app hace un llamado al api de OpenAI, `OPENAI_API_KEY` la enviare por correo y la desactivare despues de unos dias, si tienes una key de open_ai que funcione tambien la puedes usar
-* `AWS_ACCESS_KEY_ID` y `AWS_ACCESS_KEY_SECRET` las uso para aprovisionar los secretos del agente de codebuild, (se que lo puedo hacer con un rol pero debido a que uso un `AWS_PROFILE` en toda la infra como codigo y no tengo mucho tiempo, de momento lo dejo asi (deuda tecnica))
-
-
-Despues se debe inicializar el backend s3 (no use lock con dynamodb ya que al trabajar solo no lo vi necesario)
+Después se debe inicializar el backend S3 (no use lock con DynamoDB ya que al trabajar solo no lo vi necesario).
 
 ```
 terraform init -backend-config=tf_backend.conf
 ```
 
-Aplicar los dos primeros modulos (`networking` y `eks`), no se aplican los demas porque el provider de kubernetes depende de datos que son salida de module.eks (pues depende de que el cluster exista) y terraform plan intenta inicializar todos los providers al hacer el plan.
+Aplicar los dos primeros módulos (`networking` y `eks`). No se aplican los demás porque el provider de Kubernetes depende de datos que son salida de module.eks (pues depende de que el cluster exista) y terraform plan intenta inicializar todos los providers al hacer el plan.
 
-El siguiente comando entonces desplegara todos los recursos de red (VPC, Subnets, IGW, NAT, ETC..) y un cluster de EKS con los addons necesarios:
+El siguiente comando entonces desplegará todos los recursos de red (VPC, Subnets, IGW, NAT, etc.) y un cluster de EKS con los addons necesarios:
 
 ```
 terraform apply -target=module.network -target=module.eks
 ```
 
-Se aplican el resto de recursos, estos incluyen el AWS Load Balancer Controller, las dos aplicaciones y proyecto de codebuild para el CICD.
+Se aplican el resto de recursos, estos incluyen el AWS Load Balancer Controller, las dos aplicaciones y proyecto de CodeBuild para el CI/CD.
 
-En el primer despliegue en local se buildearan las imagenes de docker con un local provisioner y se subiran a sus respectivos repositorios de ECR
+En el primer despliegue en local se buildearán las imágenes de Docker con un local provisioner y se subirán a sus
+
+ respectivos repositorios de ECR.
 
 ```
 terraform apply
 ```
 
-k8s_apps: contiene los manifiestos de k8s usando el provider de kubernetes, con un count (if) controlo si se crea ingress o no de esta manera re uso el mismo modulo para crear las dos apps
+`k8s_apps`: contiene los manifiestos de Kubernetes usando el provider de Kubernetes. Con un count (if) controlo si se crea ingress o no, de esta manera reuso el mismo módulo para crear las dos apps.
 
-codebuild: es un modulo para crear el proyecto de codebuild sencillo, el trigger queda siendo manual desde la UI o a traves de AWS CLI, no quice complicar la infra con webhooks de github.
+`codebuild`: es un módulo para crear el proyecto de CodeBuild sencillo. El trigger queda siendo manual desde la UI o a través de AWS CLI. No quise complicar la infra con webhooks de GitHub.
 
-**Puede que los primeros 2 minutos despues del despliegue la ruta no funcione pues el balanceador de carga tarda unos minutos en terminarse de aprovisionar**
+**Puede que los primeros 2 minutos después del despliegue la ruta no funcione pues el balanceador de carga tarda unos minutos en terminarse de aprovisionar.**
 
-**Despues de finalizar el despliegue obtendras un output que es el hostname del ALB:**
+**Después de finalizar el despliegue obtendrás un output que es el hostname del ALB:**
 
 ```
 Outputs:
@@ -173,10 +168,9 @@ alb_endpoint = tolist([
 ])
 ```
 
+**El cual podrás consumir con un post así:**
 
-**El cual podras consumir con un post asi:**
-
-E.G.:
+Ejemplo:
 ```bash
 curl --location 'k8s-default-neatrans-a7b869f0b9-647273833.us-east-1.elb.amazonaws.com/traducir/' \
 --header 'Content-Type: application/json' \
@@ -197,9 +191,9 @@ Resultado:
 }
 ```
 
-# Explicacion Networking
+# Explicación Networking
 
-Es una VPC con CIDR en 10.0.0.0/16, con 4 subnets, 2 publicas y 2 privadas para tener HA, las subnets se dividen usando:
+Es una VPC con CIDR en 10.0.0.0/16, con 4 subnets, 2 públicas y 2 privadas para tener HA. Las subnets se dividen usando:
 
 ```
 cidr_block = cidrsubnet(var.cidr_block, 8, count.index + 128)
@@ -209,38 +203,84 @@ y
 cidr_block = cidrsubnet(var.cidr_block, 8, count.index)
 ```
 
-Se van a usar 8 bits para cada subred 32-8=24, mascara 24 en las subredes, el tercer argumento determina el indice de la subred, empezando desde 0 para las publicas y 128 para las privadas
+Se van a usar 8 bits para cada subred 32-8=24, máscara 24 en las subredes, el tercer argumento determina el índice de la subred, empezando desde 0 para las públicas y 128 para las privadas.
 
-teniendo asi las siguientes subnets
+Teniendo así las siguientes subnets:
 
 ```
-10.0.0.0/24 //publica1
-10.0.1.0/24 //publica2
-10.0.128.0/24 //privada1
-10.0.128.0/24 //privada2
+10.0.0.0/24 // pública1
+10.0.1.0/24 // pública2
+10.0.128.0/24 // privada1
+10.0.128.0/24 // privada2
 ```
 
-Se creo un Internet Gateway para dar salida a internet a la VPC, se asocian las route table de las subnets publicas para que 0.0.0.0/0 salga por el IGW
+Se creó un Internet Gateway para dar salida a internet a la VPC. Se asocian las route table de las subnets públicas para que 0.0.0.0/0 salga por el IGW.
 
-Se crea un NatGateway en una de las subnets publicas y se crean routetables con salida 0.0.0.0/0 apuntando al natgateway, finalmente se asocian estas routetables a las subnets privadas, dandole asi acceso a internet tambien a las subnets privadas
+Se crea un NatGateway en una de las subnets públicas y se crean route tables con salida 0.0.0.0/0 apuntando al NatGateway. Finalmente, se asocian estas route tables a las subnets privadas, dándole así acceso a internet también a las subnets privadas.
 
-El balanceador de carga es creado automaticamente por el LBC de kubernetes en una de las subnets publicas y redirige el trafico a k8s_app client
+El balanceador de carga es creado automáticamente por el LBC de Kubernetes en una de las subnets públicas y redirige el tráfico a k8s_app client.
 
-k8s_app client se comunica con grpc server por la red interna de kubernetes apuntando al nombre del servicio
-
+k8s_app client se comunica con grpc server por la red interna de Kubernetes apuntando al nombre del servicio.
 
 # Aplicaciones
 
-Es un traductor del español regular al español nea o ñero que llaman, el lenguaje callejero que es diferente en cada region de colombia
+Es un traductor del español regular al español nea o ñero que llaman, el lenguaje callejero que es diferente en cada región de Colombia.
 
-Esta compuesto de un API client en FastAPI (`nea-translator`) y un GRPC Server que recibe los llamados de nea-translator por GRPC y envia peticiones a el API de OPENAI para hacer la traduccion (`nea-translator-grpc-server`)
+Está compuesto de un API client en FastAPI (`nea-translator`) y un GRPC Server que recibe los llamados de nea-translator por GRPC y envía peticiones al API de OPENAI para hacer la traducción (`nea-translator-grpc-server`).
 
-Ambas apps estan hechas con python, pipenv para los ambientes virtuales y dependencias, en cada carpeta hay un par de dockerfiles que sirven como imagen de build y tambien de runtime, tambien hay un `docker-compose.yml`, un `start.sh` y un `startbuild.sh` que
-permiten arrancar en local la aplicacion usando `dockercompose` y los secretos que existan en el `.env`
+Ambas apps están hechas con Python, pipenv para los ambientes virtuales y dependencias. En cada carpeta hay un par de Dockerfiles que sirven como imagen de build y también de runtime. También hay un `docker-compose.yml`, un `start.sh` y un `startbuild.sh` que permiten arrancar en local la aplicación usando `docker-compose` y los secretos que existan en el `.env`.
 
-`nea-translator` tiene una prueba unitaria para simular el CI del proceso de CICD
+`nea-translator` tiene una prueba unitaria para simular el CI del proceso de CI/CD.
 
-Para arrancar la aplicacion se debe:
+Para arrancar la aplicación se debe:
 
-* crear un `.env` colocando el valor de OPENAI_API_KEY
-* ejecutar `./startbuild.sh`
+* Crear un `.env` colocando el valor de OPENAI_API_KEY.
+* Ejecutar `./startbuild.sh`.
+
+# CI/CD
+
+Se creo un proyecto de codebuild que usando las mismas credenciales de aws y el mismo profile re despliega la aplicacion usando este `buildspec.yml`
+
+```yaml
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - curl -O https://releases.hashicorp.com/terraform/1.5.5/terraform_1.5.5_linux_amd64.zip
+      - unzip terraform_1.5.5_linux_amd64.zip
+      - chmod +x terraform
+      - mv terraform /usr/local/bin/
+      - python --version
+      - aws --version
+      - docker --version
+      - pip --version
+  pre_build:
+    commands:
+      - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile "$AWS_PROFILE"
+      - aws configure set aws_secret_access_key "$AWS_ACCESS_KEY_SECRET" --profile "$AWS_PROFILE"
+      - aws configure set region "$AWS_REGION" --profile "$AWS_PROFILE"
+      - aws sts get-caller-identity --profile "$AWS_PROFILE"
+      - cd infra
+      - echo "aws_profile=\"${AWS_PROFILE}\"" >> terraform.tfvars
+      - echo "aws_account_id=\"${AWS_ACCOUNT_ID}\"" >> terraform.tfvars
+      - echo "OPENAI_API_KEY=\"${OPENAI_API_KEY}\"" >> terraform.tfvars
+      - echo "AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"" >> terraform.tfvars
+      - echo "AWS_ACCESS_KEY_SECRET=\"${AWS_ACCESS_KEY_SECRET}\"" >> terraform.tfvars
+      - echo "image_version=\"${CODEBUILD_BUILD_NUMBER}\"" >> terraform.tfvars
+      - echo "force_image_rebuild=true" >> terraform.tfvars
+      - terraform init -backend-config=tf_backend.conf
+  build:
+    commands:
+      - cd ../apps/nea-translator/
+      - docker build . -f dockerfile.local  -t nea-translator-test
+      - docker container run nea-translator-test pipenv run test
+      - cd ../../infra
+      - terraform validate
+      - terraform apply -auto-approve
+
+```
+
+Quedo sin trigger automatico.
