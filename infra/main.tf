@@ -97,7 +97,7 @@ module "codebuild_project" {
     },
     {
       name  = "AWS_PROFILE"
-      value = "default" # var.aws_profile
+      value = "default" # var.aws_profile #TODO:Here
     },
     # {
     #   name  = "AWS_ACCESS_KEY_ID"
