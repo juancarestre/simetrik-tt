@@ -7,6 +7,7 @@
 6. [Guía de despliegue](#guía-de-despliegue)
 7. [Explicación Networking](#explicación-networking)
 8. [Aplicaciones](#aplicaciones)
+9. [CI/CD](#cicd)
 
 # Aplicación
 
