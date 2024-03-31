@@ -74,6 +74,12 @@ resource "kubernetes_manifest" "service" {
 resource "kubernetes_manifest" "ingress" {
   count      = var.create_ingress ? 1 : 0
   depends_on = [null_resource.build_push_dkr_img]
+
+  wait {
+    fields ={
+       "status.loadBalancer.ingress[0].hostname" = "*"
+    }
+  }
   manifest = {
     "apiVersion" = "networking.k8s.io/v1"
     "kind"       = "Ingress"
