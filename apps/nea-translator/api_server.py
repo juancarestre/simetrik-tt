@@ -13,7 +13,7 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"message": "Hellox, World nea!", "version": APP_VERSION}
+    return {"message": "Helloxxx, World nea!", "version": APP_VERSION}
 
 @app.post("/traducir/")
 def create_item(item: Item):

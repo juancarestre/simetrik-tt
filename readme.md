@@ -1,39 +1,18 @@
-# Requerimientos
+# Table of Contents
+1. [Aplicacion](#aplicacion)
+2. [TLDR](#tldr-solo-si-estas-de-afan-hazlo-asi-si-tienes-tiempo-ve-a-guia-de-despliegue-paso-a-paso)
+3. [Requerimientos](#requerimientos)
+4. [Diagrama de arquitectura](#diagrama-de-arquitectura)
+5. [Explicacion rapida](#explicacion-rapida)
+6. [Guia de despliegue](#guia-de-despliegue)
+7. [Explicacion Networking](#explicacion-networking)
+8. [Aplicaciones](#aplicaciones)
 
-* Python ~3
-* PIP
-* Awscli ~v2
-* Docker
-* Terraform ~v1.5.5
-* Se debe configurar aws cli con un profile de un usuario con suficientes permisos para crear todos los recursos
+# Aplicacion
 
-    ```
-    aws configure --profile <PROFILE_NAME>
-    ```
-    **Este profile es con el cual se desplegara todo**
+Esto es la infraestructura como codigo usando Terraform para desplegar un cluster de eks en una nueva vpc y un par de aplicaciones que seran deployments dentro del cluster.
 
-* El usuario que ejecuta terraform debe tener permisos para ejecutar docker (Ya que estoy buildeando las imagenes de las apps durante el proceso)
-
-# Diagrama de arquitectura
-
-![arquitectura](simetrik.drawio.png)
-
-# Explicacion rapida
-
-Tengo las apps y la infra separadas, no me gusta usar terraform para aprovisionar codigo (osea usar terraform dentro del proceso de CD) pero dado que la prueba requeria desplegar las apps con un modulo hice lo siguiente
-
-* modulo `networking`: crea todo lo de vpc, subnets, igw, nat, ECT
-* modulo `eks`: crea un cluster de eks con lo minimo necesariopara andar (addons, cni, coredns, nodegroups, ETC)
-* modulo `loadbalancercontroller`: el controlador para permitir la creacion de ALBs bajo demanda de ingress
-* modulo `k8s_apps`: define los manifiestos de kubernetes para las aplicaciones y todo lo que necesitan
-
-De esta manera se desligan las aplicaciones de la infraestructura, siendo asi que si hay cambios en las apps el unico modulo que detectara cambios es `k8s_apps` y no el modulo `eks` (que desde mi punto de vista solo debe desplegar un cluster con lo minimo necesario)
-
-Se usaron varios providers: aws, helm, y kubernetes
-
-# Guia de despliegue
-
-## TLDR (solo si estas de afan hazlo asi, si tienes tiempo ve a: [Guia de despliegue paso a paso](#guia-de-despliegue-paso-a-paso)
+### TLDR (solo si estas de afan hazlo asi, si tienes tiempo ve a: [Guia de despliegue paso a paso](#guia-de-despliegue-paso-a-paso)
 
 crea un archivo .env en infra/.env con esta forma modificando los respectivos valores:
 
@@ -72,7 +51,41 @@ terraform destroy
 ```
 
 
-## Guia de despliegue paso a paso
+
+# Requerimientos
+
+* Python ~3
+* PIP
+* Awscli ~v2
+* Docker
+* Terraform ~v1.5.5
+* Se debe configurar aws cli con un profile de un usuario con suficientes permisos para crear todos los recursos
+
+    ```
+    aws configure --profile <PROFILE_NAME>
+    ```
+    **Este profile es con el cual se desplegara todo**
+
+* El usuario que ejecuta terraform debe tener permisos para ejecutar docker (Ya que estoy buildeando las imagenes de las apps durante el proceso)
+
+# Diagrama de arquitectura
+
+![arquitectura](simetrik.drawio.png)
+
+# Explicacion rapida
+
+Tengo las apps y la infra separadas, no me gusta usar terraform para aprovisionar codigo (osea usar terraform dentro del proceso de CD) pero dado que la prueba requeria desplegar las apps con un modulo hice lo siguiente
+
+* modulo `networking`: crea todo lo de vpc, subnets, igw, nat, ECT
+* modulo `eks`: crea un cluster de eks con lo minimo necesariopara andar (addons, cni, coredns, nodegroups, ETC)
+* modulo `loadbalancercontroller`: el controlador para permitir la creacion de ALBs bajo demanda de ingress
+* modulo `k8s_apps`: define los manifiestos de kubernetes para las aplicaciones y todo lo que necesitan
+
+De esta manera se desligan las aplicaciones de la infraestructura, siendo asi que si hay cambios en las apps el unico modulo que detectara cambios es `k8s_apps` y no el modulo `eks` (que desde mi punto de vista solo debe desplegar un cluster con lo minimo necesario)
+
+Se usaron varios providers: aws, helm, y kubernetes
+
+# Guia de despliegue
 
 El proyecto se divide en dos partes `apps/` e `infra/`, en `apps/` se guardaran las aplicaciones `nea-translator` y `nea-translator-grpc-server`, para entender mas sobre ellas ir a la seccion de: [Aplicaciones](#aplicaciones), en `infra/` esta todo el codigo para realizar el despliegue (Terraform y un poco de bash)
 
@@ -183,6 +196,37 @@ Resultado:
     "region": "bogota"
 }
 ```
+
+# Explicacion Networking
+
+Es una VPC con CIDR en 10.0.0.0/16, con 4 subnets, 2 publicas y 2 privadas para tener HA, las subnets se dividen usando:
+
+```
+cidr_block = cidrsubnet(var.cidr_block, 8, count.index + 128)
+```
+y
+```
+cidr_block = cidrsubnet(var.cidr_block, 8, count.index)
+```
+
+Se van a usar 8 bits para cada subred 32-8=24, mascara 24 en las subredes, el tercer argumento determina el indice de la subred, empezando desde 0 para las publicas y 128 para las privadas
+
+teniendo asi las siguientes subnets
+
+```
+10.0.0.0/24 //publica1
+10.0.1.0/24 //publica2
+10.0.128.0/24 //privada1
+10.0.128.0/24 //privada2
+```
+
+Se creo un Internet Gateway para dar salida a internet a la VPC, se asocian las route table de las subnets publicas para que 0.0.0.0/0 salga por el IGW
+
+Se crea un NatGateway en una de las subnets publicas y se crean routetables con salida 0.0.0.0/0 apuntando al natgateway, finalmente se asocian estas routetables a las subnets privadas, dandole asi acceso a internet tambien a las subnets privadas
+
+El balanceador de carga es creado automaticamente por el LBC de kubernetes en una de las subnets publicas y redirige el trafico a k8s_app client
+
+k8s_app client se comunica con grpc server por la red interna de kubernetes apuntando al nombre del servicio
 
 
 # Aplicaciones
