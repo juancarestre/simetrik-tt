@@ -14,6 +14,21 @@
 
 Esto es una infraestructura como código usando Terraform para desplegar un cluster de EKS en una nueva VPC y un par de aplicaciones que serán deployments dentro del cluster de Kubernetes.
 
+Dejare una instancia de la aplicacion corriendo temporalmente en caso de que la quieran probar
+
+```
+curl --location --request GET 'k8s-default-neatrans-a7b869f0b9-302055234.us-east-1.elb.amazonaws.com/'
+
+
+curl --location 'k8s-default-neatrans-a7b869f0b9-302055234.us-east-1.elb.amazonaws.com/traducir/' \
+--header 'Content-Type: application/json' \
+--data '{
+    "mensaje": "Esta conmemoración nos evoca ese patriotismo que motiva a izar la bandera, a ponernos prendas de vestir con los colores patrios y a sentirnos orgullosos de nuestros exponentes culturales y sociales",
+    "nivel_de_nea": 10,
+    "region": "bogota"
+}'
+```
+
 ### TLDR (solo si estás de afán hazlo así, si tienes tiempo ve a: [Guía de despliegue paso a paso](#guía-de-despliegue-paso-a-paso))
 
 Crea un archivo .env en infra/.env con esta forma modificando los respectivos valores:
