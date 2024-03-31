@@ -27,6 +27,7 @@ phases:
       - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile "$AWS_PROFILE"
       - aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile "$AWS_PROFILE"
       - aws configure set region "$AWS_REGION" --profile "$AWS_PROFILE"
+      - aws sts get-caller-identity --profile "$AWS_PROFILE"
       - cat ~/.aws/credentials
       # enddd
 
